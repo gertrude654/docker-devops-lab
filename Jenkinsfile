@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'gerturde/dockerlab'
+        DOCKER_IMAGE = 'gerturde/dockerlab:latest'
         GIT_REPO_URL = 'https://github.com/gertrude654/docker-devops-lab.git'
         GIT_BRANCH = 'master'
         DOCKERHUB_CREDENTIALS_ID = '425775b7-629b-4c2f-b757-74f5dc26fbe4' // Replace with your Docker Hub credentials in Jenkins
@@ -21,9 +21,9 @@ pipeline {
                 script {
                     try {
                         // Build the Docker image (no nohup required on Windows)
-                        sh """
+                        sh "
                         docker build -t ${DOCKER_IMAGE} .
-                        """
+                        "
                     } catch (Exception e) {
                         error "Docker image build failed: ${e.message}"
                     }
