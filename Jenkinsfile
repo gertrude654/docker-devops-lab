@@ -62,22 +62,54 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                script {
-                    try {
-                        // Assuming you want to deploy locally
-                        // Stop any existing containers and run the new image
-                        sh """
-                        docker stop $(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
-                        docker run -d ${DOCKER_IMAGE}
-                        """
-                    } catch (Exception e) {
-                        error "Deployment failed: ${e.message}"
-                    }
-                }
+//         stage('Deploy') {
+//                    steps {
+//                        script {
+//                            try {
+//                                // Assuming you want to deploy locally
+//                                // Stop any existing containers and run the new image
+//                                sh """
+//                                docker stop $(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
+//                                docker run -d ${DOCKER_IMAGE}
+//                                """
+//                            } catch (Exception e) {
+//                                error "Deployment failed: ${e.message}"
+//                            }
+//                        }
+//                    }
+stage('Deploy') {
+    steps {
+        script {
+            try {
+                // Assuming you want to deploy locally
+                // Stop any existing containers and run the new image
+                sh """
+                docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
+                docker run -d ${DOCKER_IMAGE}
+                """
+            } catch (Exception e) {
+                error "Deployment failed: ${e.message}"
             }
         }
+
+
+
+               } stage('Deploy') {
+                            steps {
+                                script {
+                                    try {
+                                        // Assuming you want to deploy locally
+                                        // Stop any existing containers and run the new image
+                                        sh """
+                                        docker stop $(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
+                                        docker run -d ${DOCKER_IMAGE}
+                                        """
+                                    } catch (Exception e) {
+                                        error "Deployment failed: ${e.message}"
+                                    }
+                                }
+                            }
+                        }
     }
 
     post {
