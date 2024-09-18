@@ -21,9 +21,9 @@ pipeline {
                 script {
                     try {
                         // Build the Docker image (no nohup required on Windows)
-                        sh "
+                        sh """
                         docker build -t ${DOCKER_IMAGE} .
-                        "
+                        """
                     } catch (Exception e) {
                         error "Docker image build failed: ${e.message}"
                     }
