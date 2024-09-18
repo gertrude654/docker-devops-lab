@@ -1,0 +1,6 @@
+com\docker\DockerLab\model\Product.class
+com\docker\DockerLab\service\ProductService.class
+com\docker\DockerLab\repository\ProductRepository.class
+com\docker\DockerLab\DockerMessageController.class
+com\docker\DockerLab\DockerLabApplication.class
+com\docker\DockerLab\controller\ProductController.class
