@@ -20,8 +20,10 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Build the Docker image
-                        sh "docker build -t ${DOCKER_IMAGE} ."
+                        // Build the Docker image (no nohup required on Windows)
+                        sh """
+                        docker build -t ${DOCKER_IMAGE} .
+                        """
                     } catch (Exception e) {
                         error "Docker image build failed: ${e.message}"
                     }
@@ -33,8 +35,8 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Run tests inside Docker container (if any test suite is included)
-                        sh "docker run --rm ${DOCKER_IMAGE} ./run-tests.sh" // Adjust this based on your test script
+                        // Assuming your Docker image has tests (adjust command as per your tests)
+                        sh "docker run --rm ${DOCKER_IMAGE} ./run-tests.sh"
                     } catch (Exception e) {
                         error "Tests failed: ${e.message}"
                     }
@@ -65,7 +67,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Stop any existing containers and run the new image
+                        // Stop and redeploy Docker container
                         sh """
                         docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
                         docker run -d ${DOCKER_IMAGE}
