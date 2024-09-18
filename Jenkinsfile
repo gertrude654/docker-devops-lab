@@ -15,6 +15,32 @@ pipeline {
                 git branch: "${GIT_BRANCH}", url: "${GIT_REPO_URL}"
             }
         }
+         stage('Build JAR') {
+                    steps {
+                        script {
+                            try {
+                                // Build the JAR file
+                                bat 'mvn clean package'
+                            } catch (Exception e) {
+                                error "Maven build failed: ${e.message}"
+                            }
+                        }
+                    }
+                }
+
+                stage('Verify JAR File') {
+                    steps {
+                        script {
+                            try {
+                                // Verify that the JAR file exists
+                                bat 'dir target'
+                                bat 'dir target\\DockerLab-0.0.1-SNAPSHOT.jar'
+                            } catch (Exception e) {
+                                error "File verification failed: ${e.message}"
+                            }
+                        }
+                    }
+                }
 
         stage('Build Docker Image') {
             steps {
