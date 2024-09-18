@@ -34,7 +34,6 @@ pipeline {
                 script {
                     try {
                         // Run tests inside Docker container (if any test suite is included)
-                        // Assuming that your Docker image includes some tests, this command can vary based on your project setup
                         sh "docker run --rm ${DOCKER_IMAGE} ./run-tests.sh" // Adjust this based on your test script
                     } catch (Exception e) {
                         error "Tests failed: ${e.message}"
@@ -62,54 +61,21 @@ pipeline {
             }
         }
 
-//         stage('Deploy') {
-//                    steps {
-//                        script {
-//                            try {
-//                                // Assuming you want to deploy locally
-//                                // Stop any existing containers and run the new image
-//                                sh """
-//                                docker stop $(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
-//                                docker run -d ${DOCKER_IMAGE}
-//                                """
-//                            } catch (Exception e) {
-//                                error "Deployment failed: ${e.message}"
-//                            }
-//                        }
-//                    }
-stage('Deploy') {
-    steps {
-        script {
-            try {
-                // Assuming you want to deploy locally
-                // Stop any existing containers and run the new image
-                sh """
-                docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
-                docker run -d ${DOCKER_IMAGE}
-                """
-            } catch (Exception e) {
-                error "Deployment failed: ${e.message}"
+        stage('Deploy') {
+            steps {
+                script {
+                    try {
+                        // Stop any existing containers and run the new image
+                        sh """
+                        docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
+                        docker run -d ${DOCKER_IMAGE}
+                        """
+                    } catch (Exception e) {
+                        error "Deployment failed: ${e.message}"
+                    }
+                }
             }
         }
-
-
-
-               } stage('Deploy') {
-                            steps {
-                                script {
-                                    try {
-                                        // Assuming you want to deploy locally
-                                        // Stop any existing containers and run the new image
-                                        sh """
-                                        docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
-                                        docker run -d ${DOCKER_IMAGE}
-                                        """
-                                    } catch (Exception e) {
-                                        error "Deployment failed: ${e.message}"
-                                    }
-                                }
-                            }
-                        }
     }
 
     post {
@@ -123,5 +89,4 @@ stage('Deploy') {
             echo 'Pipeline failed!'
         }
     }
-}
 }
