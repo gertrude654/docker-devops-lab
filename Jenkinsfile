@@ -62,7 +62,7 @@ pipeline {
                 script {
                     try {
                         // Assuming your Docker image has tests (adjust command as per your tests)
-                        sh "docker run --rm ${DOCKER_IMAGE} ./run-tests.sh"
+                        bat 'docker run --rm %DOCKER_IMAGE% ./run-tests.sh'
                     } catch (Exception e) {
                         error "Tests failed: ${e.message}"
                     }
@@ -76,9 +76,9 @@ pipeline {
                     try {
                         // Login to Docker Hub and push the image
                         withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                            sh """
-                            docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}
-                            docker tag ${DOCKER_IMAGE} ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}
+                            bat """
+                            docker login -u %DOCKERHUB_USERNAME% -p ${DOCKERHUB_PASSWORD}
+                            docker tag %DOCKER_IMAGE% %DOCKERHUB_USERNAME%/${DOCKER_IMAGE}
                             docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}
                             """
                         }
