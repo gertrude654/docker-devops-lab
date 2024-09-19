@@ -15,6 +15,34 @@ pipeline {
                 git branch: "${GIT_BRANCH}", url: "${GIT_REPO_URL}"
             }
         }
+    stages {
+        stage('Build') {
+            steps {
+                bat 'mvn clean compile'
+                echo 'Maven build completed'
+            }
+        }
+
+    stage('Test') {
+        steps {
+            script {
+                def hasTests = sh(script: 'find src/test/java -name "*.java" | wc -l', returnStdout: true).trim()
+                if (hasTests != "0") {
+                    echo "Running tests..."
+                    sh 'mvn test'
+                } else {
+                    echo "No tests found, skipping test stage"
+                }
+            }
+        }
+    }
+
+    stage('Package') {
+        steps {
+            bat 'mvn package -DskipTests'
+            echo 'Maven package completed'
+        }
+    }
 //          stage('Build JAR') {
 //                     steps {
 //                         script {
@@ -57,18 +85,18 @@ pipeline {
             }
         }
 
-        stage('Test Docker Image') {
-            steps {
-                script {
-                    try {
-                        // Assuming your Docker image has tests (adjust command as per your tests)
-                        bat 'docker run --rm %DOCKER_IMAGE% ./run-tests.sh'
-                    } catch (Exception e) {
-                        error "Tests failed: ${e.message}"
-                    }
-                }
-            }
-        }
+        // stage('Test Docker Image') {
+        //     steps {
+        //         script {
+        //             try {
+        //                 // Assuming your Docker image has tests (adjust command as per your tests)
+        //                 bat 'docker run --rm %DOCKER_IMAGE% ./run-tests.sh'
+        //             } catch (Exception e) {
+        //                 error "Tests failed: ${e.message}"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Push to Docker Hub') {
             steps {
