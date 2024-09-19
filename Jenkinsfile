@@ -105,9 +105,9 @@ pipeline {
                             // Login to Docker Hub and push the image
                             withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS_ID}", usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                                 bat """
-                                docker login -u %DOCKERHUB_USERNAME% -p ${DOCKERHUB_PASSWORD}
-                                docker tag %DOCKER_IMAGE% %DOCKERHUB_USERNAME%/${DOCKER_IMAGE}
-                                docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}
+                                docker login -u %DOCKERHUB_USERNAME% -p %DOCKERHUB_PASSWORD%
+                                docker tag %DOCKER_IMAGE% %DOCKERHUB_USERNAME%/%DOCKER_IMAGE%
+                                docker push %DOCKERHUB_USERNAME%/$%DOCKER_IMAGE%
                                 """
                             }
                         } catch (Exception e) {
@@ -123,8 +123,8 @@ pipeline {
                         try {
                             // Stop and redeploy Docker container
                             sh """
-                            docker stop \$(docker ps -q --filter ancestor=${DOCKER_IMAGE}) || true
-                            docker run -d ${DOCKER_IMAGE}
+                            docker stop \$(docker ps -q --filter ancestor=%DOCKER_IMAGE%) || true
+                            docker run -d %DOCKER_IMAGE%
                             """
                         } catch (Exception e) {
                             error "Deployment failed: ${e.message}"
